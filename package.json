@@ -1,0 +1,19 @@
+{
+  "name": "clone-tabnews",
+  "version": "1.0.0",
+  "description": "Repository to study and implement a copy of tab news",
+  "main": "index.js",
+  "scriptnpms": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "scripts": {
+    "dev": "next dev"
+  },
+  "author": "Gustavo Lima",
+  "license": "MIT",
+  "dependencies": {
+    "next": "^13.1.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
