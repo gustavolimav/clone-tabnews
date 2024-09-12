@@ -21,6 +21,7 @@
   "author": "Gustavo Lima",
   "license": "MIT",
   "dependencies": {
+    "@types/jest": "^29.5.12",
     "dotenv": "^16.4.4",
     "next": "^14.2.5",
     "node-pg-migrate": "^6.2.2",
