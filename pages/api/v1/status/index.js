@@ -1,6 +1,6 @@
 import database from "infra/database.js";
 
-async function status(request, response) {
+export default async function status(request, response) {
   const updatedAt = new Date().toISOString();
   const databaseOpenedConnections = await getDatabaseOpenedConnections();
   const databaseMaxConnections = await getDatabaseMaxConnections();
@@ -17,8 +17,6 @@ async function status(request, response) {
     },
   });
 }
-
-export default status;
 
 async function getDatabaseMaxConnections() {
   const result = await database.query("SHOW max_connections;");
