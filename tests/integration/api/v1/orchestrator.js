@@ -1,8 +1,7 @@
-import retry from "async-retry"
+import retry from "async-retry";
 
 async function waitForAllServices() {
   await waitForWebServer();
-
 
   async function waitForWebServer() {
     return retry(fetchStatusPage, {
@@ -21,8 +20,7 @@ async function waitForAllServices() {
       }
     }
   }
-
 }
 export default {
   waitForAllServices,
-}
+};
