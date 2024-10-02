@@ -3,6 +3,18 @@
     "next/core-web-vitals",
     "plugin:jest/recommended",
     "eslint:recommended",
-    "prettier"
-  ]
+    "prettier",
+    "plugin:jsonc/base"
+  ],
+  "plugins": ["no-secrets"],
+  "rules": {
+    "no-secrets/no-secrets": [
+      "error",
+      {
+        "additionalRegexes": {
+          "Basic Auth": "Authorization: Basic [A-Za-z0-9+/=]*"
+        }
+      }
+    ]
+  }
 }
