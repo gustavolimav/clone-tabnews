@@ -16,5 +16,13 @@
         }
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["package-lock.json"],
+      "rules": {
+        "no-secrets/no-secrets": "off"
+      }
+    }
+  ]
 }
