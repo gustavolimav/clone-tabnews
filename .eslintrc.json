@@ -19,7 +19,7 @@
   },
   "overrides": [
     {
-      "files": ["package-lock.json"],
+      "files": ["package-lock.json", ".eslintrc.json"],
       "rules": {
         "no-secrets/no-secrets": "off"
       }
