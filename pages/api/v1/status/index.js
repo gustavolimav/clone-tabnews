@@ -1,6 +1,19 @@
 import database from "infra/database.js";
+import handleRequest from "utils/allowedMethodHandler.js";
+
+const allowedMethods = ["GET"];
+
+const methodHandlers = {
+  GET: (request, response) => {
+    return getStatus(response);
+  },
+};
 
 export default async function status(request, response) {
+  return handleRequest(request, response, allowedMethods, methodHandlers);
+}
+
+async function getStatus(response) {
   const updatedAt = new Date().toISOString();
   const databaseOpenedConnections = await getDatabaseOpenedConnections();
   const databaseMaxConnections = await getDatabaseMaxConnections();
