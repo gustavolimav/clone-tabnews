@@ -32,11 +32,18 @@ describe("Users API", () => {
       expect(response.status).toBe(201);
 
       const responseBody = await response.json();
-      expect(responseBody.user).toHaveProperty("id");
-      expect(responseBody.user.username).toBe(newUser.username);
-      expect(responseBody.user.email).toBe(newUser.email);
 
-      testUserId = responseBody.user.id;
+      const user = responseBody.user;
+
+      expect(user).toHaveProperty("id");
+      expect(user).toHaveProperty("username");
+      expect(user).toHaveProperty("email");
+      expect(user).toHaveProperty("createdAt");
+      expect(user).toHaveProperty("updatedAt");
+      expect(user.username).toBe(newUser.username);
+      expect(user.email).toBe(newUser.email);
+
+      testUserId = user.id;
     });
   });
 });

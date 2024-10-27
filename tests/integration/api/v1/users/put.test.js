@@ -38,9 +38,17 @@ describe("Users API", () => {
       expect(response.status).toBe(200);
 
       const responseBody = await response.json();
-      expect(responseBody.user).toHaveProperty("id", testUserId);
-      expect(responseBody.user.username).toBe(updatedUserData.username);
-      expect(responseBody.user.email).toBe(updatedUserData.email);
+
+      const user = responseBody.user;
+
+      expect(user).toHaveProperty("id");
+      expect(user).toHaveProperty("username");
+      expect(user).toHaveProperty("email");
+      expect(user).toHaveProperty("createdAt");
+      expect(user).toHaveProperty("updatedAt");
+      expect(user).toHaveProperty("id", testUserId);
+      expect(user.username).toBe(updatedUserData.username);
+      expect(user.email).toBe(updatedUserData.email);
     });
   });
 });

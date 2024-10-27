@@ -1,5 +1,5 @@
-import database from "infra/database.js";
 import handleRequest from "utils/allowedMethodHandler.js";
+import UserModel from "models/userModel";
 
 const allowedMethods = ["GET", "POST", "PUT", "DELETE"];
 
@@ -23,13 +23,9 @@ export default async function handler(request, response) {
 }
 
 async function getUsers(response) {
-  const result = await database.query(
-    "SELECT id, username, email, created_at, updated_at, last_login FROM users ORDER BY created_at DESC;",
-  );
+  const allUsers = await UserModel.getAll();
 
-  const users = result.rows;
-
-  response.status(200).json({ users });
+  response.status(200).json({ users: allUsers.map((user) => user.toJSON()) });
 }
 
 async function createUser(request, response) {
@@ -39,47 +35,33 @@ async function createUser(request, response) {
     return response.status(400).json({ error: "Missing required fields" });
   }
 
-  const result = await database.query(
-    `INSERT INTO users (username, email, password_hash) 
-   VALUES ($1, $2, $3) RETURNING id, username, email, created_at, updated_at, last_login;`,
-    [username, email, passwordHash],
-  );
+  const newUser = await UserModel.create({
+    username: username,
+    email: email,
+    passwordHash: passwordHash,
+  });
 
-  const newUser = result.rows[0];
-
-  response.status(201).json({ user: newUser });
+  response.status(201).json({ user: newUser.toJSON() });
 }
 
 async function updateUser(request, response) {
-  const { id, username, email } = request.body;
+  const { id, username, email, passwordHash } = request.body;
 
-  if (!id || (!username && !email)) {
+  if (!id && !username && !email && !passwordHash) {
     return response.status(400).json({ error: "Missing required fields" });
   }
 
-  const fieldsToUpdate = [];
-  const values = [id];
+  const updatedUser = await UserModel.update(id, {
+    username,
+    email,
+    passwordHash,
+  });
 
-  if (username) {
-    fieldsToUpdate.push("username = $2");
-    values.push(username);
-  }
-  if (email) {
-    fieldsToUpdate.push("email = $3");
-    values.push(email);
-  }
-
-  const result = await database.query(
-    `UPDATE users SET ${fieldsToUpdate.join(", ")}, updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING id, username, email, created_at, updated_at, last_login;`,
-    values,
-  );
-
-  const updatedUser = result.rows[0];
   if (!updatedUser) {
     return response.status(404).json({ error: "User not found" });
   }
 
-  response.status(200).json({ user: updatedUser });
+  response.status(200).json({ user: updatedUser.toJSON() });
 }
 
 async function deleteUser(request, response) {
@@ -89,12 +71,7 @@ async function deleteUser(request, response) {
     return response.status(400).json({ error: "User ID is required" });
   }
 
-  const result = await database.query(
-    `DELETE FROM users WHERE id = $1 RETURNING id;`,
-    [id],
-  );
-
-  const deletedUser = result.rows[0];
+  const deletedUser = await UserModel.delete(id);
 
   if (!deletedUser) {
     return response.status(404).json({ error: "User not found" });

@@ -37,7 +37,8 @@ describe("Users API", () => {
       expect(user).toHaveProperty("id");
       expect(user).toHaveProperty("username");
       expect(user).toHaveProperty("email");
-      expect(user).toHaveProperty("created_at");
+      expect(user).toHaveProperty("createdAt");
+      expect(user).toHaveProperty("updatedAt");
     });
   });
 });
