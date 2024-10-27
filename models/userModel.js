@@ -1,6 +1,6 @@
 import database from "../infra/database.js";
 
-class UserModel {
+export default class UserModel {
   constructor(data) {
     this.id = data.id;
     this.username = data.username;
@@ -81,10 +81,8 @@ class UserModel {
       id: this.id,
       username: this.username,
       email: this.email,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
+      created_at: this.createdAt,
+      updated_at: this.updatedAt,
     };
   }
 }
-
-export default UserModel;

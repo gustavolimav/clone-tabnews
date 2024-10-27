@@ -38,8 +38,8 @@ describe("Users API", () => {
       expect(user).toHaveProperty("id");
       expect(user).toHaveProperty("username");
       expect(user).toHaveProperty("email");
-      expect(user).toHaveProperty("createdAt");
-      expect(user).toHaveProperty("updatedAt");
+      expect(user).toHaveProperty("created_at");
+      expect(user).toHaveProperty("updated_at");
       expect(user.username).toBe(newUser.username);
       expect(user.email).toBe(newUser.email);
 
