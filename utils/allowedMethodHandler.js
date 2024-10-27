@@ -6,8 +6,9 @@ export default function handleRequest(
 ) {
   const { method } = request;
 
+  response.setHeader("Access-Control-Allow-Methods", [allowedMethods]);
+
   if (!allowedMethods.includes(method)) {
-    response.setHeader("Allow", allowedMethods);
     return response.status(405).end(`Method ${method} Not Allowed`);
   }
 
