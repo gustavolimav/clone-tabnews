@@ -1,5 +1,6 @@
 import handleRequest from "utils/allowedMethodHandler.js";
 import UserModel from "models/userModel";
+import isFeatureEnabled from "utils/featureFlagUtil";
 
 const allowedMethods = ["GET", "POST", "PUT", "DELETE"];
 
@@ -18,7 +19,11 @@ const methodHandlers = {
   },
 };
 
-export default async function handler(request, response) {
+export default async function users(request, response) {
+  if (!isFeatureEnabled("FEATURE_FLAG_USERS")) {
+    return response.status(403).json({ message: "Feature not available" });
+  }
+
   return handleRequest(request, response, allowedMethods, methodHandlers);
 }
 
