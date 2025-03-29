@@ -1,18 +1,27 @@
 import { Client } from "pg";
 
-async function query(queryObject) {
+async function query(queryText, values) {
   let client;
 
   try {
     client = await getNewClient();
 
-    const result = await client.query(queryObject);
+    let result;
+
+    if (values === undefined) {
+      result = await client.query(queryText);
+    } else {
+      result = await client.query(queryText, values);
+    }
 
     return result;
   } catch (err) {
-    console.log(err);
+    console.error("Database query error:", err);
+    throw err;
   } finally {
-    await client.end();
+    if (client) {
+      await client.end();
+    }
   }
 }
 
