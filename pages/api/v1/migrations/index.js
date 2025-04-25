@@ -2,34 +2,14 @@ import migrationRunner from "node-pg-migrate";
 import { resolve } from "node:path";
 import database from "infra/database.js";
 import { createRouter } from "next-connect";
-import { InternalServerError, MethodNotAllowedError } from "infra/errors.js";
+import controller from "infra/controller.js";
 
 const router = createRouter();
 
 router.get(getHandler);
 router.post(postHandler);
 
-export default router.handler({
-  onNoMatch: onNoMatchHandler,
-  onError: onErrorHandler,
-});
-
-function onNoMatchHandler(request, response) {
-  const publicErrorObject = new MethodNotAllowedError();
-
-  return response.status(publicErrorObject.status_code).json(publicErrorObject);
-}
-
-function onErrorHandler(error, request, response) {
-  const publicErrorObject = new InternalServerError({
-    cause: error,
-  });
-
-  console.log("Error in /api/v1/migrations API handler: ", error);
-  console.error(publicErrorObject);
-
-  return response.status(publicErrorObject.status_code).json(publicErrorObject);
-}
+export default router.handler(controller.errorHandlers);
 
 async function postHandler(request, response) {
   let dbClient;
@@ -78,9 +58,6 @@ async function getHandler(request, response) {
         migrationsTable: "pgmigrations",
       }),
     );
-  } catch (error) {
-    console.error(error);
-    throw error;
   } finally {
     await dbClient.end();
   }
