@@ -1,46 +1,49 @@
 import database from "infra/database.js";
-import handleRequest from "utils/allowedMethodHandler.js";
-import { InternalServerError } from "infra/errors.js";
+import { InternalServerError, MethodNotAllowedError } from "infra/errors.js";
+import { createRouter } from "next-connect";
 
-const allowedMethods = ["GET"];
+const router = createRouter();
 
-const methodHandlers = {
-  GET: (request, response) => {
-    return getStatus(response);
-  },
-};
+router.get(getHandler);
 
-export default async function status(request, response) {
-  return handleRequest(request, response, allowedMethods, methodHandlers);
+export default router.handler({
+  onNoMatch: onNoMatchHandler,
+  onError: onErrorHandler,
+});
+
+function onNoMatchHandler(request, response) {
+  const publicErrorObject = new MethodNotAllowedError();
+
+  return response.status(publicErrorObject.status_code).json(publicErrorObject);
 }
 
-async function getStatus(response) {
-  try {
-    const updatedAt = new Date().toISOString();
-    const databaseOpenedConnections = await getDatabaseOpenedConnections();
-    const databaseMaxConnections = await getDatabaseMaxConnections();
-    const databaseVersion = await getDatabaseVersion();
+function onErrorHandler(error, request, response) {
+  const publicErrorObject = new InternalServerError({
+    cause: error,
+  });
 
-    response.status(200).json({
-      updated_at: updatedAt,
-      dependencies: {
-        database: {
-          version: databaseVersion,
-          max_connections: databaseMaxConnections,
-          opened_connections: databaseOpenedConnections,
-        },
+  console.log("Error in /api/v1/status API handler: ", error);
+  console.error(publicErrorObject);
+
+  return response.status(publicErrorObject.status).json(publicErrorObject);
+}
+
+async function getHandler(request, response) {
+  const updatedAt = new Date().toISOString();
+  const databaseOpenedConnections = await getDatabaseOpenedConnections();
+  const databaseMaxConnections = await getDatabaseMaxConnections();
+  const databaseVersion = await getDatabaseVersion();
+
+  response.status(200).json({
+    updated_at: updatedAt,
+    dependencies: {
+      database: {
+        version: databaseVersion,
+        max_connections: databaseMaxConnections,
+        opened_connections: databaseOpenedConnections,
       },
-    });
-  } catch (error) {
-    const publicErrorObject = new InternalServerError({
-      cause: error,
-    });
-
-    console.log("\nError in status endpoint: ");
-    console.error(publicErrorObject);
-
-    response.status(500).json(publicErrorObject);
-  }
+    },
+  });
 }
 
 async function getDatabaseMaxConnections() {

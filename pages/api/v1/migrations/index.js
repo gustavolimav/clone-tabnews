@@ -1,24 +1,37 @@
 import migrationRunner from "node-pg-migrate";
 import { resolve } from "node:path";
 import database from "infra/database.js";
-import handleRequest from "utils/allowedMethodHandler.js";
+import { createRouter } from "next-connect";
+import { InternalServerError, MethodNotAllowedError } from "infra/errors.js";
 
-const allowedMethods = ["GET", "POST"];
+const router = createRouter();
 
-const methodHandlers = {
-  GET: (request, response) => {
-    return getMigrations(response);
-  },
-  POST: (request, response) => {
-    return postMigrations(response);
-  },
-};
+router.get(getHandler);
+router.post(postHandler);
 
-export default async function migrations(request, response) {
-  return handleRequest(request, response, allowedMethods, methodHandlers);
+export default router.handler({
+  onNoMatch: onNoMatchHandler,
+  onError: onErrorHandler,
+});
+
+function onNoMatchHandler(request, response) {
+  const publicErrorObject = new MethodNotAllowedError();
+
+  return response.status(publicErrorObject.status_code).json(publicErrorObject);
 }
 
-async function postMigrations(response) {
+function onErrorHandler(error, request, response) {
+  const publicErrorObject = new InternalServerError({
+    cause: error,
+  });
+
+  console.log("Error in /api/v1/migrations API handler: ", error);
+  console.error(publicErrorObject);
+
+  return response.status(publicErrorObject.status_code).json(publicErrorObject);
+}
+
+async function postHandler(request, response) {
   let dbClient;
 
   try {
@@ -49,7 +62,7 @@ async function postMigrations(response) {
   }
 }
 
-async function getMigrations(response) {
+async function getHandler(request, response) {
   let dbClient;
 
   try {
