@@ -1,5 +1,6 @@
 import database from "infra/database.js";
 import handleRequest from "utils/allowedMethodHandler.js";
+import { InternalServerError } from "infra/errors.js";
 
 const allowedMethods = ["GET"];
 
@@ -14,21 +15,32 @@ export default async function status(request, response) {
 }
 
 async function getStatus(response) {
-  const updatedAt = new Date().toISOString();
-  const databaseOpenedConnections = await getDatabaseOpenedConnections();
-  const databaseMaxConnections = await getDatabaseMaxConnections();
-  const databaseVersion = await getDatabaseVersion();
+  try {
+    const updatedAt = new Date().toISOString();
+    const databaseOpenedConnections = await getDatabaseOpenedConnections();
+    const databaseMaxConnections = await getDatabaseMaxConnections();
+    const databaseVersion = await getDatabaseVersion();
 
-  response.status(200).json({
-    updated_at: updatedAt,
-    dependencies: {
-      database: {
-        version: databaseVersion,
-        max_connections: databaseMaxConnections,
-        opened_connections: databaseOpenedConnections,
+    response.status(200).json({
+      updated_at: updatedAt,
+      dependencies: {
+        database: {
+          version: databaseVersion,
+          max_connections: databaseMaxConnections,
+          opened_connections: databaseOpenedConnections,
+        },
       },
-    },
-  });
+    });
+  } catch (error) {
+    const publicErrorObject = new InternalServerError({
+      cause: error,
+    });
+
+    console.log("\nError in status endpoint: ");
+    console.error(publicErrorObject);
+
+    response.status(500).json(publicErrorObject);
+  }
 }
 
 async function getDatabaseMaxConnections() {
