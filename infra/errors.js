@@ -11,7 +11,26 @@ export class InternalServerError extends Error {
       name: this.name,
       message: this.message,
       action: this.action,
-      status_code: this.status_code,
+      status: this.status_code,
+    };
+  }
+}
+
+export class MethodNotAllowedError extends Error {
+  constructor() {
+    super();
+    this.name = "MethodNotAllowedError";
+    this.action = "Please check the API documentation for the correct usage.";
+    this.message = "Method Not Allowed";
+    this.status_code = 405;
+  }
+
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      action: this.action,
+      status: this.status_code,
     };
   }
 }
