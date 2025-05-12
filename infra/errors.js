@@ -38,6 +38,24 @@ export class ServiceError extends Error {
   }
 }
 
+export class ValidationError extends Error {
+  constructor({ message, action }) {
+    super(message || "A validation error occurred.");
+    this.name = "ValidationError";
+    this.action = action || "Check the provided data.";
+    this.statusCode = 400;
+  }
+
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      action: this.action,
+      status: this.statusCode,
+    };
+  }
+}
+
 export class MethodNotAllowedError extends Error {
   constructor() {
     super();
