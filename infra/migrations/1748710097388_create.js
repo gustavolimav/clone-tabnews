@@ -22,4 +22,3 @@ exports.up = (pgm) => {
     notNull: true,
   });
 };
-
