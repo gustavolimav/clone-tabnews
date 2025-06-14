@@ -42,11 +42,17 @@ describe("POST /api/v1/users", () => {
 
       const userFromDatabase = await user.findOneByUsername("testuser1");
 
-      const correctPasswordCompare = await password.compare("password123", userFromDatabase.password)
+      const correctPasswordCompare = await password.compare(
+        "password123",
+        userFromDatabase.password,
+      );
 
       expect(correctPasswordCompare).toBeTruthy();
 
-      const incorrectPasswordCompare = await password.compare("wrongpassword", userFromDatabase.password);
+      const incorrectPasswordCompare = await password.compare(
+        "wrongpassword",
+        userFromDatabase.password,
+      );
 
       expect(incorrectPasswordCompare).toBeFalsy();
     });
@@ -70,8 +76,8 @@ describe("POST /api/v1/users", () => {
 
       expect(responseBody).toEqual({
         name: "ValidationError",
-        message: "Email already in use",
-        action: "Use another email address",
+        message: "O email informado já está sendo utilizado.",
+        action: "Utilize outro email para realizar esta operação.",
         status: 400,
       });
     });
@@ -95,8 +101,8 @@ describe("POST /api/v1/users", () => {
 
       expect(responseBody).toEqual({
         name: "ValidationError",
-        message: "Username already in use",
-        action: "Use another username",
+        action: "Utilize outro username para realizar esta operação.",
+        message: "O username informado já está sendo utilizado.",
         status: 400,
       });
     });
