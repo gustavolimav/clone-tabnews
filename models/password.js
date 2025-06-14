@@ -25,7 +25,8 @@ function getNumberOfRounds() {
 }
 
 const password = {
-  hash, compare
+  hash,
+  compare,
 };
 
 export default password;
