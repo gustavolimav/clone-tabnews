@@ -11,7 +11,7 @@ export default router.handler(controller.errorHandlers);
 async function getHandler(request, response) {
   const username = request.query.username;
 
-  const newUser = await users.getByUsername(username);
+  const newUser = await users.findOneByUsername(username);
 
   return response.status(200).json({
     id: newUser.id,
