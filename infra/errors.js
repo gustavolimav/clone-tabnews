@@ -94,3 +94,23 @@ export class MethodNotAllowedError extends Error {
     };
   }
 }
+
+export class UnathorizedError extends Error {
+  constructor({ cause, message, action }) {
+    super(message || "Usuário não autenticado.", {
+      cause,
+    });
+    this.name = "UnathorizedError";
+    this.action = action || "Faça login para realizar esta operação.";
+    this.statusCode = 401;
+  }
+
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      action: this.action,
+      status: this.statusCode,
+    };
+  }
+}
