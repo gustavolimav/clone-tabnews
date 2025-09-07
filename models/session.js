@@ -3,6 +3,25 @@ import crypto from "crypto";
 
 const EXPIRATION_IN_MILLISECONDS = 60 * 60 * 24 * 30 * 1000; // 30 days
 
+async function findOneValidByToken(token) {
+  const results = await database.query({
+    text: `
+        SELECT
+         *
+        FROM
+          sessions
+        WHERE
+          token = $1
+          AND expires_at > NOW()
+        LIMIT
+        1
+        ;`,
+    values: [token],
+  });
+
+  return results.rows[0];
+}
+
 async function create(userId) {
   const token = crypto.randomBytes(48).toString("hex");
   const expiresAt = new Date(Date.now() + EXPIRATION_IN_MILLISECONDS);
@@ -31,6 +50,7 @@ async function runInsertQuery(token, userId, expiresAt) {
 const session = {
   create,
   EXPIRATION_IN_MILLISECONDS,
+  findOneValidByToken,
 };
 
 export default session;

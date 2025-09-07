@@ -38,6 +38,31 @@ async function findOneByEmail(email) {
   return results.rows[0];
 }
 
+async function findOneById(userId) {
+  const results = await database.query({
+    text: `
+        SELECT 
+          id, username, email, created_at, updated_at
+        FROM 
+          users
+        WHERE 
+          id = $1
+        LIMIT
+          1
+        ;`,
+    values: [userId],
+  });
+
+  if (results.rowCount === 0) {
+    throw new NotFoundError({
+      message: "O userId informado não foi encontrado no sistema.",
+      action: "Verifique se o userId está digitado corretamente.",
+    });
+  }
+
+  return results.rows[0];
+}
+
 async function findOneByUsername(username) {
   const results = await database.query({
     text: `
@@ -192,6 +217,7 @@ const user = {
   findOneByUsername,
   findOneByEmail,
   updateByUsername,
+  findOneById,
 };
 
 export default user;
