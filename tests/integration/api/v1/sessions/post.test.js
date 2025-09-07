@@ -32,7 +32,7 @@ describe("POST /api/v1/sessions", () => {
       const responseBody = await response.json();
 
       expect(responseBody).toEqual({
-        name: "UnathorizedError",
+        name: "UnauthorizedError",
         message: "Email ou senha inválidos.",
         action: "Verifique se o email e a senha estão digitados corretamente.",
         status: 401,
@@ -61,7 +61,7 @@ describe("POST /api/v1/sessions", () => {
       const responseBody = await response.json();
 
       expect(responseBody).toEqual({
-        name: "UnathorizedError",
+        name: "UnauthorizedError",
         message: "Email ou senha inválidos.",
         action: "Verifique se o email e a senha estão digitados corretamente.",
         status: 401,
@@ -90,7 +90,7 @@ describe("POST /api/v1/sessions", () => {
       const responseBody = await response.json();
 
       expect(responseBody).toEqual({
-        name: "UnathorizedError",
+        name: "UnauthorizedError",
         message: "Email ou senha inválidos.",
         action: "Verifique se o email e a senha estão digitados corretamente.",
         status: 401,
