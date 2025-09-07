@@ -1,5 +1,6 @@
 import database from "infra/database.js";
 import crypto from "crypto";
+import { UnauthorizedError } from "infra/errors.js";
 
 const EXPIRATION_IN_MILLISECONDS = 60 * 60 * 24 * 30 * 1000; // 30 days
 
@@ -18,6 +19,15 @@ async function findOneValidByToken(token) {
         ;`,
     values: [token],
   });
+
+  console.log(results.rows);
+
+  if (results.rowCount === 0) {
+    throw new UnauthorizedError({
+      message: "A sessão informada é inválida.",
+      action: "Faça login novamente.",
+    });
+  }
 
   return results.rows[0];
 }

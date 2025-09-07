@@ -95,12 +95,12 @@ export class MethodNotAllowedError extends Error {
   }
 }
 
-export class UnathorizedError extends Error {
+export class UnauthorizedError extends Error {
   constructor({ cause, message, action }) {
     super(message || "Usuário não autenticado.", {
       cause,
     });
-    this.name = "UnathorizedError";
+    this.name = "UnauthorizedError";
     this.action = action || "Faça login para realizar esta operação.";
     this.statusCode = 401;
   }
