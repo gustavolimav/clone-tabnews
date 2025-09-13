@@ -14,7 +14,13 @@ async function getHandler(request, response) {
 
   const validSession = await session.findOneValidByToken(sessionToken);
 
+  await session.renew(validSession.id);
+
   const userFound = await user.findOneById(validSession.user_id);
+
+  await controller.setSessionCookies(validSession, response);
+
+  await controller.setCacheControlNoStore(response);
 
   return response.status(200).json(userFound);
 }
